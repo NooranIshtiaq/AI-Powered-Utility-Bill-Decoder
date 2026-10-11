@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en" data-theme="light"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Utility Bill Decoder: understand your electricity bill</title>
+<meta name="description" content="Upload a K-Electric, LESCO or IESCO bill and get every charge explained in plain English, Roman Urdu or Urdu.">
+<style>
+:root{--bg:#0a0f1f;--bg2:#10172e;--card:rgba(255,255,255,.045);--card2:rgba(255,255,255,.07);--line:rgba(255,255,255,.1);--tx:#eef1fb;--mu:#98a3c7;--ac:#ffb020;--ac2:#ff6b8b;--cy:#4cc9f0;--ok:#3ddc97;--bad:#ff6b6b;--warn:#ffc857;--shadow:0 10px 40px rgba(0,0,0,.35)}
+[data-theme=light]{--bg:#f5f7fd;--bg2:#e9eefb;--card:#fff;--card2:#f1f4fc;--line:#dde3f3;--tx:#162044;--mu:#5d6a93;--ac:#e8920c;--ac2:#e0446a;--cy:#1692c4;--ok:#16a870;--bad:#d9434a;--warn:#b7791f;--shadow:0 10px 30px rgba(30,45,100,.1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;color:var(--tx);font:15px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);min-height:100vh}
+body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(900px 500px at 12% -5%,rgba(255,176,32,.16),transparent),radial-gradient(800px 500px at 95% 5%,rgba(76,201,240,.14),transparent),radial-gradient(700px 500px at 50% 110%,rgba(255,107,139,.1),transparent)}
+[dir=rtl] body,[dir=rtl]{font-family:"Noto Nastaliq Urdu","Jameel Noori Nastaleeq","Segoe UI",Tahoma,serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0;gap:12px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:19px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.logo i{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#1a1000;font-style:normal;font-size:10px;font-weight:800;letter-spacing:.02em;box-shadow:0 6px 20px rgba(255,140,40,.35)}
+.tools{display:flex;gap:8px;align-items:center}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px}
+.seg button{background:none;border:0;color:var(--mu);padding:5px 12px;border-radius:99px;cursor:pointer;font:inherit;font-size:13px}
+.seg button.on{background:var(--ac);color:#1a1000;font-weight:700}
+.ico{background:var(--card);border:1px solid var(--line);color:var(--tx);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:15px}
+.hero{text-align:center;padding:38px 0 14px}
+.hero h1{font-size:clamp(30px,5.2vw,52px);line-height:1.08;margin:0 0 14px;letter-spacing:-.03em}
+.grad{background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mu);max-width:640px;margin:0 auto 26px;font-size:17px}
+.model{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:99px;padding:3px 11px;color:var(--mu);margin-bottom:16px;background:var(--card)}
+.drop{max-width:680px;margin:0 auto;border:2px dashed var(--line);border-radius:20px;padding:38px 20px;background:var(--card);cursor:pointer;transition:.2s;backdrop-filter:blur(6px)}
+.drop:hover,.drop.on{border-color:var(--ac);transform:translateY(-2px);box-shadow:var(--shadow)}
+.drop b{display:block;font-size:17px;margin:8px 0 2px}.drop span{color:var(--mu);font-size:13px}.drop .big{font-size:38px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:34px 0 10px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.step .n{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#1a1000;font-weight:800;display:grid;place-items:center;margin-bottom:8px}
+.step b{display:block}.step span{color:var(--mu);font-size:13.5px}
+.privacy{color:var(--mu);font-size:12.5px;text-align:center;margin:14px 0 6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;backdrop-filter:blur(6px)}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}.gm{grid-template-columns:300px 1fr}
+@media(max-width:860px){.gm{grid-template-columns:1fr}}
+h2{font-size:16px;margin:0 0 12px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.stat .l{color:var(--mu);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em}.stat .v{font-size:27px;font-weight:800;margin-top:2px;letter-spacing:-.02em}.stat .s{color:var(--mu);font-size:12.5px}
+.stat.hl{background:linear-gradient(135deg,rgba(255,176,32,.18),rgba(255,107,139,.12));border-color:rgba(255,176,32,.4)}
+img.prev{width:100%;border-radius:12px;border:1px solid var(--line);display:block}
+.row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--line)}.row:last-child{border:0}.row b{font-variant-numeric:tabular-nums;white-space:nowrap}.neg{color:var(--ok)}
+.bar{height:14px;border-radius:99px;overflow:hidden;display:flex;background:var(--card2);margin:8px 0 6px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 16px}
+.pill{display:inline-flex;gap:6px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:13px;color:var(--mu)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button.pri{background:linear-gradient(135deg,var(--ac),#ff8a3d);color:#1a1000;border:0;border-radius:11px;padding:9px 15px;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(255,140,40,.25)}
+button.pri:disabled{opacity:.5}button.gh{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:11px;padding:8px 13px;font:inherit;font-size:13.5px;cursor:pointer}button.gh:hover{border-color:var(--ac)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow:auto}
+.tab{background:none;border:0;color:var(--mu);padding:10px 16px;cursor:pointer;font:inherit;font-weight:600;border-bottom:2px solid transparent;white-space:nowrap}.tab.on{color:var(--tx);border-color:var(--ac)}
+.pane{display:none}.pane.on{display:block;animation:fade .3s}@keyframes fade{from{opacity:0;transform:translateY(6px)}}
+.alert{border-radius:14px;padding:14px 16px;border:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.alert.ok{background:rgba(61,220,151,.1);border-color:rgba(61,220,151,.4)}.alert.watch{background:rgba(255,200,87,.1);border-color:rgba(255,200,87,.45)}
+.alert.warning{background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.5)}.alert.info,.alert.none{background:var(--card)}
+.alert .ic{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:var(--ac);margin-top:7px}
+.alert.ok .ic{background:var(--ok)}.alert.watch .ic{background:var(--warn)}.alert.warning .ic{background:var(--bad)}.alert.info .ic,.alert.none .ic{background:var(--cy)}
+.warn{background:rgba(255,200,87,.1);border:1px solid rgba(255,200,87,.4);color:var(--warn);border-radius:10px;padding:8px 12px;margin:6px 0;font-size:13px}
+.slider{width:100%;accent-color:var(--ac);height:30px}
+.big{font-size:40px;font-weight:800;letter-spacing:-.03em}.delta{font-weight:700}.up{color:var(--bad)}.dn{color:var(--ok)}
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.tip{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:14px}.tip b{display:block;margin-bottom:4px}.tip .sv{display:inline-block;margin-top:8px;background:rgba(61,220,151,.15);color:var(--ok);border-radius:99px;padding:2px 10px;font-size:12.5px;font-weight:700}
+details{border:1px solid var(--line);border-radius:12px;padding:11px 14px;margin-bottom:8px;background:var(--card2)}summary{cursor:pointer;font-weight:600}details p{margin:8px 0 2px}
+.vb{font-size:11.5px;border-radius:99px;padding:1px 8px;margin-inline-start:6px;font-weight:600;background:rgba(61,220,151,.15);color:var(--ok);white-space:nowrap}.vb.no{background:rgba(255,200,87,.15);color:var(--warn)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.chip{background:var(--card2);border:1px solid var(--line);color:var(--tx);border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}.chip:hover{border-color:var(--ac)}
+.chat{max-height:320px;overflow:auto;margin-bottom:10px}.msg{padding:9px 13px;border-radius:14px;margin:7px 0;max-width:88%;white-space:pre-wrap}.me{background:linear-gradient(135deg,var(--ac),#ff8a3d);color:#1a1000;margin-inline-start:auto}.bot{background:var(--card2);border:1px solid var(--line)}
+.ask{display:flex;gap:8px}input[type=text]{flex:1;background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:10px 13px;color:var(--tx);font:inherit}
+pre{background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:12px;padding:12px;overflow:auto;font-size:12px;max-height:380px;margin:0;color:#dfe6ff}[data-theme=light] pre{background:#f1f4fc;color:#162044}
+.load{max-width:520px;margin:26px auto 0;text-align:left}.ls{display:flex;gap:10px;align-items:center;padding:7px 0;color:var(--mu)}.ls.on{color:var(--tx);font-weight:600}.ls.done{color:var(--ok)}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--ac);border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+.err{color:var(--bad);text-align:center;margin-top:12px}.hide{display:none!important}.mu{color:var(--mu)}
+footer{color:var(--mu);font-size:12.5px;text-align:center;padding:36px 0 50px}
+html[data-theme="light"]{--bg:#f7f8f6;--bg2:#eef1ed;--card:#fff;--card2:#f5f7f4;--line:#dce2dc;--tx:#1d2a25;--mu:#68756e;--ac:#176b55;--ac2:#176b55;--cy:#438a9e;--ok:#287a56;--bad:#b74949;--warn:#92661d;--shadow:0 8px 24px rgba(30,45,36,.07)}
+html[data-theme="dark"]{--bg:#111916;--bg2:#18221e;--card:#18221e;--card2:#1e2a25;--line:#2d3b34;--tx:#e8eee9;--mu:#a0afa5;--ac:#72c4a2;--ac2:#72c4a2;--cy:#78b8c5;--ok:#82c8a0;--bad:#f08c83;--warn:#e4bd70;--shadow:0 10px 28px rgba(0,0,0,.18)}
+body{background:var(--bg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+body:before{background:none}
+.wrap{max-width:1180px;padding-inline:28px}
+nav{padding:17px 0;border-bottom:1px solid var(--line)}
+.logo{font-size:17px;letter-spacing:-.01em}
+.logo i{width:34px;height:34px;border-radius:9px;background:var(--ac);color:#fff;box-shadow:none}
+html[data-theme="dark"] .logo i{color:#132019}
+.seg{border-radius:10px;background:var(--card);padding:3px}
+.seg button{border-radius:7px}
+.seg button.on{background:var(--ac);color:#fff}
+html[data-theme="dark"] .seg button.on{color:#132019}
+.ico{border-radius:9px}
+.hero{text-align:start;padding:54px 0 18px}
+.hero h1{max-width:760px;font-size:clamp(34px,5vw,52px);line-height:1.12;letter-spacing:-.04em}
+.grad{color:var(--ac);background:none}
+.hero>p{max-width:700px;margin:0 0 26px;font-size:16px}
+.model{border-radius:6px;padding:4px 9px;margin-bottom:14px;background:transparent;font-weight:600}
+.drop{max-width:none;border:1px dashed #aab8ae;border-radius:12px;padding:30px 20px;background:var(--card);box-shadow:none}
+.drop:hover,.drop.on{border-color:var(--ac);transform:none;box-shadow:var(--shadow)}
+.drop .big{color:var(--ac)}
+.steps{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 10px}
+.step{border-radius:10px;padding:15px 16px;background:transparent}
+.step .n{width:25px;height:25px;border-radius:7px;background:var(--bg2);color:var(--ac);font-size:13px}
+.privacy{text-align:start;max-width:760px;line-height:1.6}
+.card{border-radius:12px;padding:20px;background:var(--card);backdrop-filter:none;box-shadow:0 1px 2px rgba(20,35,27,.025)}
+.grid{gap:12px}
+h2{font-size:15px;letter-spacing:-.01em}
+.stat .l{font-size:11px;letter-spacing:.06em}
+.stat .v{font-size:25px}
+.stat.hl{background:var(--card);border-color:var(--ac);border-inline-start:3px solid var(--ac)}
+.row{border-bottom-style:solid}
+.bar{height:10px;border-radius:4px}
+.pill{border-radius:7px;padding:6px 10px}
+button.pri{background:var(--ac);color:#fff;border-radius:8px;box-shadow:none}
+html[data-theme="dark"] button.pri{color:#132019}
+button.pri:hover{filter:brightness(.94)}
+button.gh{border-radius:8px}
+.tabs{gap:8px}
+.tab{padding:10px 12px}
+.tab.on{color:var(--ac)}
+.alert{border-radius:10px}
+.tip{border-radius:10px}
+.tip .sv{border-radius:6px}
+details{border-radius:9px;background:var(--card)}
+.chip{border-radius:7px}
+.me{background:var(--ac);color:#fff}
+html[data-theme="dark"] .me{color:#132019}
+.bot{background:var(--card2)}
+input[type=text]{min-width:0;border-radius:8px;background:var(--bg)}
+input[type=text]:focus,.chip:focus-visible,button:focus-visible,.drop:focus-visible,summary:focus-visible{outline:3px solid color-mix(in srgb,var(--ac) 38%,transparent);outline-offset:2px}
+.ask{align-items:stretch}
+pre{background:var(--bg2);color:var(--tx);border-radius:9px}
+html[data-theme="dark"] pre{color:var(--tx)}
+footer{border-top:1px solid var(--line);margin-top:38px;padding:24px 0 32px}
+.skel{height:84px;border-radius:10px;background:linear-gradient(90deg,var(--card),var(--card2),var(--card));background-size:200% 100%;animation:sh 1.3s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.hero{text-align:center;padding:42px 0 10px}
+.hero h1{max-width:760px;margin:0 auto 12px}
+.hero>p{max-width:760px;margin:0 auto 22px}
+.model{margin-bottom:12px}
+.model:empty{display:none}
+.drop{display:grid;grid-template-columns:40px 1fr;align-items:center;column-gap:13px;max-width:760px;padding:15px 18px;text-align:start;border:1px solid var(--line);border-radius:12px}
+.drop::before{content:"↑";grid-row:1 / span 2;display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:var(--bg2);color:var(--ac);font-size:21px;font-weight:600}
+.drop b{margin:0;font-size:14px}
+.drop span{font-size:12px}
+.drop:hover,.drop.on{border-color:var(--ac);transform:none;box-shadow:0 4px 14px rgba(30,45,36,.06)}
+.steps{grid-template-columns:repeat(3,minmax(0,1fr));max-width:760px;margin:18px auto 8px;gap:12px}
+.step{display:grid;grid-template-columns:28px 1fr;align-items:center;column-gap:10px;row-gap:1px;min-height:88px;padding:12px 14px;text-align:start}
+.step .n{grid-row:1 / span 2;margin:0}
+.step span{line-height:1.4}
+.privacy{margin:12px auto 6px;text-align:center}
+@media(max-width:680px){
+ .wrap{padding-inline:16px}
+ nav{align-items:flex-start}
+ .tools{gap:6px}
+ .seg button{padding:5px 8px;font-size:12px}
+ .hero{padding-top:34px}
+ .hero h1{font-size:clamp(32px,9vw,44px)}
+ .steps{grid-template-columns:1fr;gap:8px}
+ .step{padding:10px 12px}
+ .drop{max-width:100%;padding:13px 14px}
+ .g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+ .topbar{align-items:flex-start}
+ .btns{width:100%}
+ .btns button{flex:1 1 auto}
+ .card{padding:16px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style></head><body><div class="wrap">
+<nav><div class="logo"><i aria-hidden="true">BD</i> Utility Bill Decoder</div>
+ <div class="tools"><div class="seg" id="langs"><button data-l="en" class="on">English</button><button data-l="roman_ur">Roman Urdu</button><button data-l="ur">اردو</button></div><button class="ico" id="theme" title="Theme">◐</button></div></nav>
+
+<section id="hero" class="hero">
+ <span class="model" id="model"></span>
+ <h1><span data-i="hero1">Understand your</span> <span class="grad" data-i="hero2">electricity bill</span></h1>
+ <p data-i="hero_sub"></p>
+ <div class="drop" id="drop"><b data-i="drop"></b><span data-i="drop_s"></span><input id="file" type="file" accept="image/*" hidden></div>
+ <div class="load hide" id="load"></div><div class="err" id="err"></div>
+ <div class="steps"><div class="step"><div class="n">1</div><b data-i="s1t"></b><span data-i="s1d"></span></div><div class="step"><div class="n">2</div><b data-i="s2t"></b><span data-i="s2d"></span></div><div class="step"><div class="n">3</div><b data-i="s3t"></b><span data-i="s3d"></span></div></div>
+ <p class="privacy" data-i="privacy"></p>
+</section>
+
+<section id="out" class="hide">
+ <div class="topbar"><div class="pill" id="meta"></div>
+  <div class="btns"><button class="gh" id="xpdf"></button><button class="gh" id="xcsv"></button><button class="pri" id="xcard"></button><button class="gh" id="again" data-i="again"></button></div></div>
+ <div class="tabs" id="tabs"><button class="tab on" data-t="ov" data-i="t_ov"></button><button class="tab" data-t="us" data-i="t_us"></button><button class="tab" data-t="qa" data-i="t_qa"></button><button class="tab" data-t="da" data-i="t_da"></button></div>
+
+ <div class="pane on" id="p-ov">
+  <div class="grid g4" id="stats"></div>
+  <div class="grid gm" style="margin-top:14px">
+   <div class="card"><h2 data-i="your_bill"></h2><img id="prev" class="prev" alt="uploaded bill"></div>
+   <div class="grid">
+    <div class="card"><h2 data-i="where"></h2><div id="split"></div></div>
+    <div class="grid g2"><div class="card"><h2 data-i="charges"></h2><div id="charges"></div></div><div class="card"><h2 data-i="taxes"></h2><div id="taxes"></div></div></div>
+   </div></div>
+  <div id="warnings"></div>
+ </div>
+
+ <div class="pane" id="p-us">
+  <div id="alert"></div>
+  <div class="card" style="margin-bottom:14px"><h2 data-i="usage"></h2><div id="chart"></div></div>
+  <div class="grid g2" style="margin-bottom:14px">
+   <div class="card"><h2 data-i="whatif"></h2><p class="mu" style="margin-top:-6px" data-i="whatif_h"></p><div id="wi"></div></div>
+   <div class="card"><h2 data-i="curve"></h2><div id="curve"></div></div></div>
+  <div class="card"><h2 data-i="tips"></h2><div class="tips" id="tips"></div></div>
+ </div>
+
+ <div class="pane" id="p-qa">
+  <div class="card" style="margin-bottom:14px"><h2 data-i="ask_t"></h2><div class="chips" id="chips"></div><div class="chat" id="chat"></div>
+   <div class="ask"><input type="text" id="q"><button class="pri" id="send" data-i="ask_b"></button></div></div>
+  <div class="card"><h2 data-i="common"></h2><div id="qa"></div></div>
+ </div>
+
+ <div class="pane" id="p-da">
+  <div class="grid g2"><div class="card"><h2><span data-i="json_t"></span><button class="gh" id="copy" data-i="copy"></button></h2><pre id="json"></pre></div>
+  <div class="card"><h2 data-i="checks"></h2><div id="checks"></div></div></div>
+ </div>
+</section>
+<footer data-i="foot"></footer></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const I18N={
+en:{hero1:"Understand your",hero2:"electricity bill",hero_sub:"Upload a K-Electric, LESCO or IESCO bill. Get every charge explained in plain language, spot trends, estimate savings and ask questions.",drop:"Drop your bill image here, or click to choose",drop_s:"PNG, JPG or WEBP · up to 15 MB",s1t:"Upload",s1d:"A photo or screenshot of your bill, even if it is tilted or in Urdu.",s2t:"AI reads it",s2d:"Gemini extracts charges, taxes and history. Python checks every number.",s3t:"Understand",s3d:"Charges, alerts, what-if savings and answers in English, Roman Urdu or Urdu.",privacy:"Names, addresses and account numbers are never extracted. Only upload bills you are comfortable processing.",again:"New bill",t_ov:"Overview",t_us:"Usage & alerts",t_qa:"Ask",t_da:"Data",pay_by:"Pay by due date",after:"After due date",units:"Units used",this_bill:"This month's bill",due:"Due",bill_month:"Bill month",your_bill:"Your bill",where:"Where the money goes",charges:"Charges",taxes:"Taxes",total:"Total",elec:"Electricity charges",taxd:"Taxes & duties",usage:"Units per month",avg:"12-month average",whatif:"What-if calculator",whatif_h:"Drag to see an estimated bill at different usage.",curve:"Estimated bill vs units",tips:"Savings tips",common:"Common questions",ask_t:"Ask anything about this bill",ask_ph:"e.g. Why is my bill higher than last month?",ask_b:"Ask",json_t:"Extracted JSON",copy:"Copy",checks:"Validation checks",pdf:"PDF report",csv:"CSV",card:"Share card",verified:"Numbers checked",calc:"Calculated in code",unv:"unverified",est:"Estimated bill",vs:"vs this bill",none:"No itemised lines printed on this bill.",allgood:"All automatic checks passed.",think:"Thinking…",translating:"Translating…",st1:"Reading your bill image",st2:"Checking the numbers",st3:"Writing explanations",foot:"Built with Gemini, Python and Flask. Maths is computed in code; the model explains it. Estimates are labelled.",sg1:"Why is my bill this high?",sg2:"What are the biggest charges?",sg3:"How much is each unit costing me?",na:"n/a",unavail:"Not available for this bill."},
+roman_ur:{hero1:"Apne",hero2:"bijli ke bill ko samjhein",hero_sub:"K-Electric, LESCO ya IESCO ka bill upload karein. Har charge aasan zubaan mein samjhein, trend dekhein, bachat ka andaza lagayein aur sawal poochein.",drop:"Bill ki tasveer yahan chhorein, ya click karein",drop_s:"PNG, JPG ya WEBP · 15 MB tak",s1t:"Upload",s1d:"Bill ki photo ya screenshot, chahe tirchi ho ya Urdu mein ho.",s2t:"AI parhta hai",s2d:"Gemini charges, taxes aur history nikalta hai. Python har number check karta hai.",s3t:"Samjhein",s3d:"Charges, alerts, bachat ka andaza aur jawabat English, Roman Urdu ya Urdu mein.",privacy:"Naam, pata aur account number kabhi extract nahi hotay. Sirf wahi bill upload karein jo aap process karwana chahein.",again:"Naya bill",t_ov:"Jaiza",t_us:"Istemal aur alerts",t_qa:"Poochein",t_da:"Data",pay_by:"Aakhri tareekh tak ada karein",after:"Tareekh ke baad",units:"Istemal shuda units",this_bill:"Is mahine ka bill",due:"Aakhri tareekh",bill_month:"Bill ka mahina",your_bill:"Aap ka bill",where:"Paisa kahan jata hai",charges:"Charges",taxes:"Taxes",total:"Total",elec:"Bijli ke charges",taxd:"Taxes aur duties",usage:"Har mahine ke units",avg:"12 mahine ka average",whatif:"Agar aisa ho to?",whatif_h:"Slider hila kar mukhtalif units par andaza lagayein.",curve:"Units ke mutabiq andazan bill",tips:"Bachat ke mashwaray",common:"Aam sawalat",ask_t:"Is bill ke baare mein kuch bhi poochein",ask_ph:"maslan: mera bill pichlay mahine se zyada kyun hai?",ask_b:"Poochein",json_t:"Nikala gaya JSON",copy:"Copy",checks:"Validation checks",pdf:"PDF report",csv:"CSV",card:"Share card",verified:"Numbers check hue",calc:"Code se hisaab",unv:"tasdeeq nahi hui",est:"Andazan bill",vs:"is bill ke muqable",none:"Is bill par koi tafseeli lines nahi hain.",allgood:"Tamam automatic checks pass hue.",think:"Soch raha hoon…",translating:"Tarjuma ho raha hai…",st1:"Bill ki tasveer parhi ja rahi hai",st2:"Numbers check ho rahe hain",st3:"Wazahat likhi ja rahi hai",foot:"Gemini, Python aur Flask se bana. Hisaab code karta hai, model sirf samjhata hai. Andazay label hotay hain.",sg1:"Mera bill itna zyada kyun hai?",sg2:"Sab se bare charges kaun se hain?",sg3:"Mujhe har unit kitne ka para?",na:"n/a",unavail:"Is bill ke liye dastyab nahi."},
+ur:{hero1:"اپنے",hero2:"بجلی کے بل کو سمجھیں",hero_sub:"کے-الیکٹرک، لیسکو یا آئیسکو کا بل اپ لوڈ کریں۔ ہر چارج آسان زبان میں سمجھیں، رجحان دیکھیں، بچت کا اندازہ لگائیں اور سوال پوچھیں۔",drop:"بل کی تصویر یہاں چھوڑیں، یا کلک کریں",drop_s:"PNG، JPG یا WEBP · زیادہ سے زیادہ 15 MB",s1t:"اپ لوڈ",s1d:"بل کی تصویر یا اسکرین شاٹ، چاہے ٹیڑھی ہو یا اردو میں ہو۔",s2t:"AI پڑھتا ہے",s2d:"جیمینی چارجز، ٹیکس اور ہسٹری نکالتا ہے۔ پائتھن ہر عدد چیک کرتا ہے۔",s3t:"سمجھیں",s3d:"چارجز، الرٹس، بچت کا اندازہ اور جوابات انگریزی، رومن اردو یا اردو میں۔",privacy:"نام، پتہ اور اکاؤنٹ نمبر کبھی نکالے نہیں جاتے۔ صرف وہی بل اپ لوڈ کریں جو آپ پراسیس کروانا چاہیں۔",again:"نیا بل",t_ov:"جائزہ",t_us:"استعمال اور الرٹس",t_qa:"پوچھیں",t_da:"ڈیٹا",pay_by:"آخری تاریخ تک ادائیگی",after:"تاریخ کے بعد",units:"استعمال شدہ یونٹس",this_bill:"اس ماہ کا بل",due:"آخری تاریخ",bill_month:"بل کا مہینہ",your_bill:"آپ کا بل",where:"پیسہ کہاں جاتا ہے",charges:"چارجز",taxes:"ٹیکس",total:"کل",elec:"بجلی کے چارجز",taxd:"ٹیکس اور ڈیوٹیاں",usage:"ہر ماہ کے یونٹس",avg:"12 ماہ کی اوسط",whatif:"اگر ایسا ہو تو؟",whatif_h:"سلائیڈر ہلا کر مختلف یونٹس پر اندازہ دیکھیں۔",curve:"یونٹس کے مطابق اندازاً بل",tips:"بچت کے مشورے",common:"عام سوالات",ask_t:"اس بل کے بارے میں کچھ بھی پوچھیں",ask_ph:"مثلاً: میرا بل پچھلے مہینے سے زیادہ کیوں ہے؟",ask_b:"پوچھیں",json_t:"نکالا گیا JSON",copy:"کاپی",checks:"تصدیقی جانچ",pdf:"PDF رپورٹ",csv:"CSV",card:"شیئر کارڈ",verified:"اعداد چیک ہوئے",calc:"کوڈ سے حساب",unv:"تصدیق نہیں ہوئی",est:"اندازاً بل",vs:"اس بل کے مقابلے میں",none:"اس بل پر کوئی تفصیلی لائنیں نہیں ہیں۔",allgood:"تمام خودکار جانچ کامیاب رہیں۔",think:"سوچ رہا ہے…",translating:"ترجمہ ہو رہا ہے…",st1:"بل کی تصویر پڑھی جا رہی ہے",st2:"اعداد چیک ہو رہے ہیں",st3:"وضاحت لکھی جا رہی ہے",foot:"جیمینی، پائتھن اور فلاسک سے بنا۔ حساب کوڈ کرتا ہے، ماڈل صرف سمجھاتا ہے۔ اندازے واضح لکھے جاتے ہیں۔",sg1:"میرا بل اتنا زیادہ کیوں ہے؟",sg2:"سب سے بڑے چارجز کون سے ہیں؟",sg3:"مجھے ہر یونٹ کتنے کا پڑا؟",na:"n/a",unavail:"اس بل کے لیے دستیاب نہیں۔"}};
+const NAMES={energy:"Energy charges",fixed:"Fixed charges",fpa:"Fuel price adjustment",quarterly_adjustment:"Quarterly adjustment",surcharge:"Surcharge",meter_rent:"Meter rent",subsidy:"Subsidy",other:"Other",gst:"Sales tax (GST)",electricity_duty:"Electricity duty",income_tax:"Income tax",municipal_tax:"Municipal tax",other_tax:"Other tax"};
+const S={res:null,lang:"en",tr:{},QS:{},billUrl:null};
+const t=k=>I18N[S.lang][k]??I18N.en[k]??k;
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=n=>n==null?t("na"):(n<0?"-":"")+"Rs "+Math.abs(n).toLocaleString("en-PK",{maximumFractionDigits:2});
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const mlabel=m=>m?MON[+m.slice(5)-1]+" "+m.slice(0,4):"—";
+
+/* ---------- language / theme ---------- */
+function applyI18n(){document.documentElement.dir=S.lang==="ur"?"rtl":"ltr";$$("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+ $("#xpdf").textContent=t("pdf");$("#xcsv").textContent=t("csv");$("#xcard").textContent=t("card");$("#q").placeholder=t("ask_ph");
+ $$("#langs button").forEach(b=>b.classList.toggle("on",b.dataset.l===S.lang));
+ $("#chips").innerHTML=["sg1","sg2","sg3"].map(k=>`<button class="chip" data-q="${k}">${esc(t(k))}</button>`).join("")}
+async function setLang(l){S.lang=l;applyI18n();if(S.res){render();if(l!=="en")await loadTranslation(l)}}
+async function loadTranslation(l){
+ if(!S.tr[l]){const n=document.createElement("div");n.className="pill";n.id="trn";n.innerHTML='<span class="spin"></span> '+esc(t("translating"));$(".topbar").appendChild(n);
+  try{const r=await fetch("/api/translate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({bill_key:S.res.bill_key,lang:l})});const d=await r.json();if(r.ok)S.tr[l]=d}catch(e){}n.remove()}
+ if(S.lang===l&&S.tr[l])render()}
+$("#langs").onclick=e=>e.target.dataset.l&&setLang(e.target.dataset.l);
+$("#theme").onclick=()=>{const h=document.documentElement;h.dataset.theme=h.dataset.theme==="dark"?"light":"dark";localStorage.setItem("theme",h.dataset.theme);S.res&&render()};
+try{const th=localStorage.getItem("theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
+
+/* ---------- boot ---------- */
+fetch("/api/config").then(r=>r.json()).then(c=>{$("#model").textContent=c.model;c.questions.forEach(q=>S.QS[q.question_id]=q.question);if(!c.ready)$("#err").textContent="API_KEY missing. Add it to .env and restart."});
+applyI18n();
+const drop=$("#drop"),file=$("#file");drop.onclick=()=>file.click();
+["dragover","dragenter"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add("on")}));
+["dragleave","drop"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove("on")}));
+drop.addEventListener("drop",e=>e.dataTransfer.files[0]&&run(e.dataTransfer.files[0]));file.onchange=()=>file.files[0]&&run(file.files[0]);
+$("#again").onclick=()=>{$("#out").classList.add("hide");$("#hero").classList.remove("hide");S.res=null;S.tr={};file.value="";scrollTo(0,0)};
+let ticker;
+function loading(on){const L=$("#load");L.classList.toggle("hide",!on);drop.classList.toggle("hide",on);clearInterval(ticker);if(!on)return;let i=0;
+ const draw=()=>{L.innerHTML=["st1","st2","st3"].map((k,j)=>`<div class="ls ${j<i?"done":j===i?"on":""}">${j===i?'<span class="spin"></span>':""} ${esc(t(k))}</div>`).join("")+'<div class="skel" style="margin-top:12px"></div>'};draw();ticker=setInterval(()=>{i=Math.min(i+1,2);draw()},6000)}
+async function run(f){
+ $("#err").textContent="";loading(true);const fd=new FormData();fd.append("bill",f);
+ try{const r=await fetch("/api/analyze",{method:"POST",body:fd});const d=await r.json();if(!r.ok)throw new Error(d.error||"Failed");
+  S.res=d;S.tr={};S.billUrl=URL.createObjectURL(f);loading(false);$("#hero").classList.add("hide");$("#out").classList.remove("hide");scrollTo(0,0);render();if(S.lang!=="en")loadTranslation(S.lang)}
+ catch(e){loading(false);$("#err").textContent=e.message}}
+
+/* ---------- render ---------- */
+const tr=()=>S.tr[S.lang];
+function stat(l,v,s,c=""){return `<div class="card stat ${c}"><div class="l">${esc(l)}</div><div class="v">${esc(v)}</div><div class="s">${esc(s||"")}</div></div>`}
+function lines(el,arr,total){el.innerHTML=(arr.length?arr.map(x=>`<div class="row"><span>${esc(NAMES[x.type]||x.type)}</span><b class="${x.amount<0?"neg":""}">${fmt(x.amount)}</b></div>`).join(""):`<div class="mu">${esc(t("none"))}</div>`)+`<div class="row"><span><b>${esc(t("total"))}</b></span><b>${fmt(total)}</b></div>`}
+function render(){const d=S.res,l=d.level1,ins=d.insights;
+ $("#meta").textContent=[l.provider,l.tariff,mlabel(l.bill_month)].filter(Boolean).join(" · ");
+ $("#stats").innerHTML=stat(t("pay_by"),fmt(l.payable_within_due_date),t("due")+": "+(l.due_date||"—"),"hl")+stat(t("after"),fmt(l.payable_after_due_date),"")+stat(t("units"),l.units_consumed??"—",(l.sanctioned_load_kw!=null?l.sanctioned_load_kw+" kW":""))+stat(t("this_bill"),fmt(l.current_bill),t("bill_month")+": "+mlabel(l.bill_month));
+ $("#prev").src=S.billUrl;
+ const c=l.total_charges,x=l.total_taxes,tot=(c||0)+(x||0);
+ $("#split").innerHTML=tot>0?`<div class="bar"><i style="width:${c/tot*100}%;background:var(--ac)"></i><i style="width:${x/tot*100}%;background:var(--cy)"></i></div><div class="row"><span style="color:var(--ac)">● ${esc(t("elec"))}</span><b>${fmt(c)} (${(c/tot*100).toFixed(1)}%)</b></div><div class="row"><span style="color:var(--cy)">● ${esc(t("taxd"))}</span><b>${fmt(x)} (${(x/tot*100).toFixed(1)}%)</b></div>`:`<span class="mu">${esc(t("none"))}</span>`;
+ lines($("#charges"),l.charges,l.total_charges);lines($("#taxes"),l.taxes,l.total_taxes);
+ $("#warnings").innerHTML=d.warnings.map(w=>`<div class="warn">${esc(w)}</div>`).join("");
+ renderAlert(ins);renderChart(d.facts);renderWhatIf();renderTips(ins);renderQA(d);
+ $("#json").textContent=JSON.stringify(l,null,2);
+ $("#checks").innerHTML=(d.warnings.length?d.warnings.map(w=>`<div class="warn">${esc(w)}</div>`).join(""):`<div class="alert ok"><span class="ic" aria-hidden="true"></span><div>${esc(t("allgood"))}</div></div>`)}
+function renderAlert(ins){const a=ins.slab_alert;
+ const msg=(S.lang!=="en"&&tr())?tr().slab_message:a.message;
+ $("#alert").innerHTML=`<div class="alert ${a.level}"><span class="ic" aria-hidden="true"></span><div><b>${a.available?"":""}${esc(msg)}</b></div></div>`}
+function renderChart(f){
+ const rows=f.history.filter(h=>h.units!=null).map(h=>({m:h.month,u:h.units,cur:false}));
+ if(f.bill_month&&f.units_consumed!=null&&!rows.find(r=>r.m===f.bill_month))rows.push({m:f.bill_month,u:f.units_consumed,cur:true});
+ rows.sort((a,b)=>a.m.localeCompare(b.m));if(!rows.length){$("#chart").innerHTML=`<span class="mu">${esc(t("unavail"))}</span>`;return}
+ const hist=rows.filter(r=>!r.cur).slice(-12),avg=hist.length?hist.reduce((s,r)=>s+r.u,0)/hist.length:null;
+ const W=1000,H=250,p=30,mx=Math.max(...rows.map(r=>r.u),1),mn=Math.min(0,...rows.map(r=>r.u)),bw=(W-p*2)/rows.length,y=v=>H-p-(v-mn)/(mx-mn||1)*(H-p*2);
+ let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4cc9f0"/><stop offset="1" stop-color="#4cc9f0" stop-opacity=".35"/></linearGradient><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb020"/><stop offset="1" stop-color="#ff6b8b"/></linearGradient></defs>`;
+ rows.forEach((r,i)=>{const x=p+i*bw+5,top=Math.min(y(r.u),y(0)),h=Math.max(Math.abs(y(r.u)-y(0)),1);
+  s+=`<rect x="${x}" y="${top}" width="${bw-10}" height="${h}" rx="6" fill="url(#${r.cur?"g2":"g1"})"><title>${mlabel(r.m)}: ${r.u} units</title></rect><text x="${x+(bw-10)/2}" y="${top-6}" fill="var(--tx)" font-size="13" text-anchor="middle">${r.u}</text><text x="${x+(bw-10)/2}" y="${H-8}" fill="var(--mu)" font-size="12" text-anchor="middle">${MON[+r.m.slice(5)-1]} ${r.m.slice(2,4)}</text>`});
+ if(avg!=null)s+=`<line x1="${p}" x2="${W-p}" y1="${y(avg)}" y2="${y(avg)}" stroke="var(--ac2)" stroke-dasharray="6 5" stroke-width="2"/><text x="${W-p}" y="${y(avg)-6}" fill="var(--ac2)" font-size="12" text-anchor="end">${esc(t("avg"))}: ${avg.toFixed(0)}</text>`;
+ $("#chart").innerHTML=s+"</svg>"}
+function renderTips(ins){const T=(S.lang!=="en"&&tr());
+ $("#tips").innerHTML=ins.tips.map((x,i)=>`<div class="tip"><b>${esc(T?T.tip_titles[i]:x.title)}</b><span>${esc(T?T.tip_texts[i]:x.text)}</span>${x.saving_pkr?`<div><span class="sv">≈ Rs ${x.saving_pkr.toLocaleString()}</span></div>`:""}</div>`).join("")}
+function renderQA(d){const T=(S.lang!=="en"&&tr());
+ $("#qa").innerHTML=Object.entries(d.answers||{}).map(([id,a])=>{const m=(d.answer_meta||{})[id]||{};return `<details><summary>${esc(S.QS[id]||id)}<span class="vb ${m.verified?"":"no"}">${esc(m.verified?(m.source==="computed"?t("calc"):t("verified")):t("unv"))}</span></summary><p>${esc(T?T.answers[id]:a)}</p></details>`}).join("")}
+
+/* ---------- what-if ---------- */
+let wiTimer;
+function renderWhatIf(){const m=S.res.insights.cost_model,box=$("#wi");
+ if(!m){box.innerHTML=`<span class="mu">${esc(t("unavail"))}</span>`;$("#curve").innerHTML=`<span class="mu">${esc(t("unavail"))}</span>`;return}
+ const max=Math.max(Math.round(m.units*2),100);
+ box.innerHTML=`<div class="mu">${esc(t("units"))}: <b id="wu" style="color:var(--tx)">${Math.round(m.units)}</b></div><input class="slider" id="ws" type="range" min="0" max="${max}" step="1" value="${Math.round(m.units)}"><div class="mu">${esc(t("est"))}</div><div class="big" id="wb">${fmt(m.bill)}</div><div id="wd" class="delta"></div><p class="mu" id="wn" style="font-size:12.5px"></p>`;
+ $("#ws").oninput=e=>{$("#wu").textContent=e.target.value;clearTimeout(wiTimer);wiTimer=setTimeout(()=>whatIf(+e.target.value),120);drawCurve(+e.target.value)};
+ drawCurve(m.units);whatIf(m.units)}
+async function whatIf(u){try{const r=await fetch("/api/whatif",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({bill_key:S.res.bill_key,units:u})});const d=await r.json();if(!d.available)return;
+ $("#wb").textContent=fmt(d.estimated_bill);const dd=$("#wd");dd.className="delta "+(d.delta>0?"up":"dn");dd.textContent=(d.delta>=0?"+":"")+fmt(d.delta).replace("Rs ","Rs ")+" ("+(d.delta_pct>=0?"+":"")+d.delta_pct+"%) "+t("vs");$("#wn").textContent=(d.slab_note||"")+" "+d.method}catch(e){}}
+function drawCurve(sel){const pts=S.res.insights.curve,m=S.res.insights.cost_model;if(!pts.length)return;
+ const W=500,H=220,p=30,mx=pts.at(-1).units,my=Math.max(...pts.map(q=>q.bill)),X=v=>p+v/mx*(W-p*2),Y=v=>H-p-v/my*(H-p*2),est=m.fixed+m.rate_per_unit*sel;
+ const path=pts.map((q,i)=>(i?"L":"M")+X(q.units)+" "+Y(q.bill)).join(" ");
+ $("#curve").innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%"><path d="${path}" fill="none" stroke="var(--cy)" stroke-width="3"/><circle cx="${X(m.units)}" cy="${Y(m.bill)}" r="6" fill="var(--ac)"><title>This bill</title></circle><circle cx="${X(sel)}" cy="${Y(est)}" r="7" fill="var(--ac2)"/><line x1="${p}" x2="${W-p}" y1="${H-p}" y2="${H-p}" stroke="var(--line)"/><text x="${p}" y="${H-8}" fill="var(--mu)" font-size="11">0</text><text x="${W-p}" y="${H-8}" fill="var(--mu)" font-size="11" text-anchor="end">${Math.round(mx)} units</text><text x="${X(m.units)}" y="${Y(m.bill)-12}" fill="var(--ac)" font-size="11" text-anchor="middle">●</text></svg>`}
+
+/* ---------- ask ---------- */
+async function ask(q){if(!q.trim()||!S.res)return;const c=$("#chat");c.insertAdjacentHTML("beforeend",`<div class="msg me">${esc(q)}</div>`);$("#q").value="";
+ const el=document.createElement("div");el.className="msg bot";el.innerHTML='<span class="spin"></span> '+esc(t("think"));c.appendChild(el);c.scrollTop=1e6;
+ try{const r=await fetch("/api/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({bill_key:S.res.bill_key,question:q})});const d=await r.json();el.textContent=r.ok?d.answer:d.error;
+  if(r.ok){const b=document.createElement("span");b.className="vb "+(d.verified?"":"no");b.textContent=d.verified?t("verified"):t("unv");el.appendChild(document.createElement("br"));el.appendChild(b)}}
+ catch(e){el.textContent="Network error."}c.scrollTop=1e6}
+$("#send").onclick=()=>ask($("#q").value);$("#q").onkeydown=e=>e.key==="Enter"&&ask($("#q").value);
+$("#chips").onclick=e=>{const k=e.target.dataset.q;if(k){S.tabQA=1;ask(I18N.en[k])}};
+$("#tabs").onclick=e=>{const k=e.target.dataset.t;if(!k)return;$$(".tab").forEach(b=>b.classList.toggle("on",b===e.target));$$(".pane").forEach(p=>p.classList.toggle("on",p.id==="p-"+k))};
+$("#copy").onclick=()=>navigator.clipboard.writeText($("#json").textContent);
+
+/* ---------- export ---------- */
+$("#xpdf").onclick=()=>location.href="/api/export/pdf/"+S.res.bill_key;
+$("#xcsv").onclick=()=>location.href="/api/export/csv/"+S.res.bill_key;
+$("#xcard").onclick=()=>{const c=makeCard();c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="bill-summary-"+(S.res.level1.bill_month||"card")+".png";a.click()})};
+function makeCard(){const l=S.res.level1,f=S.res.facts,c=document.createElement("canvas");c.width=1200;c.height=630;const x=c.getContext("2d");
+ const g=x.createLinearGradient(0,0,1200,630);g.addColorStop(0,"#0a0f1f");g.addColorStop(1,"#1b2650");x.fillStyle=g;x.fillRect(0,0,1200,630);
+ const r=x.createRadialGradient(1050,60,10,1050,60,420);r.addColorStop(0,"rgba(255,176,32,.35)");r.addColorStop(1,"rgba(255,176,32,0)");x.fillStyle=r;x.fillRect(0,0,1200,630);
+ const F="'Segoe UI',system-ui,sans-serif";x.fillStyle="#ffb020";x.font=`800 30px ${F}`;x.fillText("Utility Bill Decoder",60,80);
+ x.fillStyle="#98a3c7";x.font=`600 24px ${F}`;x.fillText([l.provider,l.tariff,mlabel(l.bill_month)].filter(Boolean).join("  ·  "),60,125);
+ x.fillStyle="#eef1fb";x.font=`800 88px ${F}`;x.fillText(fmt(l.payable_within_due_date),60,250);
+ x.fillStyle="#98a3c7";x.font=`500 26px ${F}`;x.fillText("to pay by "+(l.due_date||"the due date"),64,292);
+ const tax=l.total_taxes&&l.current_bill?(l.total_taxes/l.current_bill*100).toFixed(1)+"%":"—";
+ const hist=f.history.filter(h=>h.units!=null).slice(-12),avg=hist.length?hist.reduce((s,h)=>s+h.units,0)/hist.length:null;
+ const tiles=[["Units used",l.units_consumed??"—"],["Taxes share",tax],["12-mo avg",avg!=null?Math.round(avg)+" units":"—"]];
+ tiles.forEach((tl,i)=>{const X=60+i*230;x.fillStyle="rgba(255,255,255,.07)";x.beginPath();x.roundRect(X,350,210,110,18);x.fill();x.fillStyle="#98a3c7";x.font=`500 20px ${F}`;x.fillText(tl[0],X+18,386);x.fillStyle="#eef1fb";x.font=`800 34px ${F}`;x.fillText(String(tl[1]),X+18,435)});
+ const rows=[...hist.map(h=>h.units)];if(l.units_consumed!=null)rows.push(l.units_consumed);const mx=Math.max(...rows,1),bw=380/Math.max(rows.length,1);
+ rows.forEach((v,i)=>{const h=Math.max(v/mx*210,3),X=760+i*bw,last=i===rows.length-1;const gg=x.createLinearGradient(0,0,0,1);x.fillStyle=last?"#ff8a3d":"#4cc9f0";x.globalAlpha=last?1:.8;x.beginPath();x.roundRect(X+3,500-h,bw-8,h,5);x.fill();x.globalAlpha=1});
+ x.fillStyle="#98a3c7";x.font=`500 18px ${F}`;x.fillText("Units per month",760,525);x.fillText("Decoded with AI · no personal data",60,590);return c}
+</script></body></html>
